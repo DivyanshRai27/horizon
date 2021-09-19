@@ -110,16 +110,7 @@ app.post('/admin', function(req, res){
 //   }).populate("postedBy","_id name").sort({'createdAt': -1});
 // });
 
-app.get('/mybookings', function(req, res){
-  if (req.isAuthenticated()) {
-    Post.find({postedBy:req.user._id}, function(err, posts){
-      // console.log(posts)
-      res.render('mybookings',{posts:posts})
-    }).sort({'createdAt': -1});
-  } else {
-    res.redirect('/login')
-  }
-})
+
 
 //Register
 app.get('/register', (req,res) =>{
@@ -143,6 +134,14 @@ app.post('/register', (req,res) => {
 //Login
 app.get('/login', (req,res) =>{
   res.render('login')
+})
+
+app.get('/profile', (req,res) =>{
+  res.render('profile')
+})
+
+app.get('/update', (req,res) =>{
+  res.render('upgrade')
 })
 
 app.post("/login", function(req, res){
@@ -196,70 +195,10 @@ app.post("/submit", function(req, res){
   })
 })
 
-app.get("/book", function(req, res){
-  if (req.isAuthenticated()) {
-    res.render('book-appointment');
-  } else {
-    res.redirect('/login')
-  }
-})
 
-app.post("/book", function(req, res){
-  const {doctor,time,mode,date} = req.body
-  if (req.isAuthenticated()) {
-    req.user.password = undefined
-    const post = new Post({
-      doctor,
-      time,
-      mode,
-      date,
-      postedBy:req.user
-    })
-    // post.save()
-    // res.redirect('/')
-    post.save()
-    res.render('payment',{
-      key:PUBLISHABLE_KEY
-  })
-  app.post('/payment', function(req, res){ 
 
-    // Moreover you can take more details from user 
-    // like Address, Name, etc from form 
-    stripe.customers.create({ 
-        email: req.body.stripeEmail, 
-        source: req.body.stripeToken, 
-        name: 'Divyansh Rai', 
-        address: { 
-            line1: 'Model Town', 
-            postal_code: '145001', 
-            city: 'Pathankot', 
-            state: 'Punjab', 
-            country: 'India', 
-        } 
-    }) 
-    .then((customer) => { 
 
-        return stripe.charges.create({ 
-            amount: 10000,    
-            description: 'Health', 
-            currency: 'inr', 
-            customer: customer.id 
-        }); 
-    }) 
-    .then((charge) => { 
-        // res.send("Success") 
-        
-    res.redirect('/mybookings')
-    }) 
-    .catch((err) => { 
-        res.send(err)    // If some error occurs 
-    }); 
-}) 
-  } else {
-    res.redirect('/login')
-  }
-  
-})
+
 
 
 
